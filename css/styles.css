@@ -1094,6 +1094,10 @@ section {
 }
 
 @media (min-width: 768px) {
+  .company-logo {
+        left: 90%;  /* Reduce distance on small screens */
+        width: 80px;  /* Resize */
+    }
   .experience-timeline::before {
     left: 50%;
   }
