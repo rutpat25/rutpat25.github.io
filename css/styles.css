@@ -189,6 +189,9 @@ img {
   animation-delay: 6s;
 }
 
+.scroll-indicator {
+    display: none;
+}
 .particle:nth-child(8) {
   width: 40px;
   height: 40px;
