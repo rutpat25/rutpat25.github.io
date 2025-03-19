@@ -159,10 +159,10 @@ img {
 
 .company-logo {
     position: absolute;
-    left: 105%;  /* Move it right of the timeline line */
+    left: 110%;  /* Move it right of the timeline line */
     top: 50%;
     transform: translateY(-50%); /* Center vertically */
-    width: 100px; /* Adjust size */
+    width: 180px; /* Adjust size */
     height: auto;
 }
 
@@ -1095,8 +1095,8 @@ section {
 
 @media (min-width: 768px) {
   .company-logo {
-        left: 90%;  /* Reduce distance on small screens */
-        width: 80px;  /* Resize */
+        left: 95%;  /* Reduce distance on small screens */
+        width: 120px;  /* Resize */
     }
   .experience-timeline::before {
     left: 50%;
