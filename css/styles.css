@@ -198,12 +198,11 @@ img {
 }
 
 .company-logo2 {
-    position: absolute;
-    left: 90%;  /* Move it right of the timeline line */
+     position: absolute;
+    right: 5%; /* Adjust to move left or right */
     top: 50%;
-    transform: translateY(-50%); /* Center vertically */
-    width: 300px; /* Adjust size */
-    height: auto;
+    transform: translateY(-50%); /* Centers vertically */
+    max-width: 150px; /* Adjust logo size */
 }
 
 .company-logo2 img {
