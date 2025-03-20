@@ -199,7 +199,7 @@ img {
 
 .company-logo2 {
      position: absolute;
-    right: 5%; /* Adjust to move left or right */
+    right: 50%; /* Adjust to move left or right */
     top: 50%;
     transform: translateY(-50%); /* Centers vertically */
     max-width: 150px; /* Adjust logo size */
