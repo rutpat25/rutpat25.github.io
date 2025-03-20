@@ -180,19 +180,19 @@ img {
 /* Move Dentsu Logo to the Right, Align Above Project Intern */
 .company-logo-right {
     position: absolute;
-    left: 5%; /* Move it slightly right */
-    top: 25%; /* Adjust vertical position */
-    transform: translateY(-50%);
-    max-width: 200px; /* Adjust size */
+    left: 55%; /* Move it right to align better */
+    top: 30%; /* Adjust vertical position */
+    transform: translate(-50%, -50%);
+    max-width: 180px; /* Adjust size */
 }
 
 /* Move Veritas Logo to the Left, Align Below Dentsu Text Box */
 .company-logo-left {
     position: absolute;
-    right: 5%; /* Move it slightly left */
-    top: 75%; /* Adjust vertical position */
-    transform: translateY(-50%);
-    max-width: 200px; /* Adjust size */
+    left: 15%; /* Move it left to align properly */
+    top: 70%; /* Adjust vertical position */
+    transform: translate(-50%, -50%);
+    max-width: 180px; /* Adjust size */
 }
 
 /* Ensure Images Scale Responsively */
@@ -208,6 +208,7 @@ img {
 .company-logo-left img:hover {
     transform: scale(1.1);
 }
+
 
 
 
