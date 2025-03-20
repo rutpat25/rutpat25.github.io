@@ -177,45 +177,38 @@ img {
     transform: scale(1.1); /* Slight hover effect */
 }
 
-.company-logo1 {
+.company-logo-left,
+.company-logo-right {
     position: absolute;
-    left: 110%;  /* Move it right of the timeline line */
     top: 50%;
-    transform: translateY(-50%); /* Center vertically */
-    width: 300px; /* Adjust size */
-    height: auto;
+    transform: translateY(-50%);
+    max-width: 200px; /* Adjust size as needed */
 }
 
-.company-logo1 img {
+/* Align Dentsu logo to the LEFT of the timeline */
+.company-logo-left {
+    left: -25%; /* Moves it left of the timeline */
+}
+
+/* Align Veritas logo to the RIGHT of the timeline */
+.company-logo-right {
+    right: -25%; /* Moves it right of the timeline */
+}
+
+/* Adjust logo size */
+.company-logo-left img,
+.company-logo-right img {
     width: 100%;
     height: auto;
     opacity: 0.9; /* Slight transparency */
     transition: transform 0.3s ease;
 }
 
-.company-logo1 img:hover {
-    transform: scale(1.1); /* Slight hover effect */
+/* Hover effect */
+.company-logo-left img:hover,
+.company-logo-right img:hover {
+    transform: scale(1.1);
 }
-
-.company-logo2 {
-     position: absolute;
-    right: 75%; /* Adjust to move left or right */
-    top: 50%;
-    transform: translateY(-50%); /* Centers vertically */
-    max-width: 250px; /* Adjust logo size */
-}
-
-.company-logo2 img {
-    width: 100%;
-    height: auto;
-    opacity: 0.9; /* Slight transparency */
-    transition: transform 0.3s ease;
-}
-
-.company-logo2 img:hover {
-    transform: scale(1.1); /* Slight hover effect */
-}
-
 
 .particle:nth-child(4) {
   width: 50px;
