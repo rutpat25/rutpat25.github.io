@@ -199,7 +199,7 @@ img {
 
 .company-logo2 {
     position: absolute;
-    left: 110%;  /* Move it right of the timeline line */
+    left: 90%;  /* Move it right of the timeline line */
     top: 50%;
     transform: translateY(-50%); /* Center vertically */
     width: 300px; /* Adjust size */
