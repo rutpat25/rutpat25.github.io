@@ -177,38 +177,38 @@ img {
     transform: scale(1.1); /* Slight hover effect */
 }
 
-.company-logo-left,
+/* Adjust Dentsu Logo (Move it slightly right and align above Project Intern) */
+.company-logo-left {
+    position: absolute;
+    left: -10%; /* Moves it slightly right */
+    top: 40%; /* Adjust vertical position */
+    transform: translateY(-50%);
+    max-width: 200px;
+}
+
+/* Adjust Veritas Logo (Move it slightly left and align below Dentsu box) */
 .company-logo-right {
     position: absolute;
-    top: 50%;
+    right: -10%; /* Moves it slightly left */
+    top: 65%; /* Adjust vertical position */
     transform: translateY(-50%);
-    max-width: 200px; /* Adjust size as needed */
+    max-width: 200px;
 }
 
-/* Align Dentsu logo to the LEFT of the timeline */
-.company-logo-left {
-    left: -15%; /* Moves it left of the timeline */
-}
-
-/* Align Veritas logo to the RIGHT of the timeline */
-.company-logo-right {
-    right: -15%; /* Moves it right of the timeline */
-}
-
-/* Adjust logo size */
+/* Ensure Images Scale Responsively */
 .company-logo-left img,
 .company-logo-right img {
     width: 100%;
     height: auto;
-    opacity: 0.9; /* Slight transparency */
+    opacity: 0.9;
     transition: transform 0.3s ease;
 }
 
-/* Hover effect */
 .company-logo-left img:hover,
 .company-logo-right img:hover {
     transform: scale(1.1);
 }
+
 
 .particle:nth-child(4) {
   width: 50px;
