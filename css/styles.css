@@ -177,6 +177,46 @@ img {
     transform: scale(1.1); /* Slight hover effect */
 }
 
+.company-logo1 {
+    position: absolute;
+    left: 110%;  /* Move it right of the timeline line */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    width: 300px; /* Adjust size */
+    height: auto;
+}
+
+.company-logo1 img {
+    width: 100%;
+    height: auto;
+    opacity: 0.9; /* Slight transparency */
+    transition: transform 0.3s ease;
+}
+
+.company-logo1 img:hover {
+    transform: scale(1.1); /* Slight hover effect */
+}
+
+.company-logo2 {
+    position: absolute;
+    left: 110%;  /* Move it right of the timeline line */
+    top: 50%;
+    transform: translateY(-50%); /* Center vertically */
+    width: 300px; /* Adjust size */
+    height: auto;
+}
+
+.company-logo2 img {
+    width: 100%;
+    height: auto;
+    opacity: 0.9; /* Slight transparency */
+    transition: transform 0.3s ease;
+}
+
+.company-logo2 img:hover {
+    transform: scale(1.1); /* Slight hover effect */
+}
+
 
 .particle:nth-child(4) {
   width: 50px;
