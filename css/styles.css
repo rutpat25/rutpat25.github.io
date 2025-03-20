@@ -159,7 +159,7 @@ img {
 
 .company-logo {
     position: absolute;
-    left: 110%;  /* Move it right of the timeline line */
+    left: 900%;  /* Move it right of the timeline line */
     top: 50%;
     transform: translateY(-50%); /* Center vertically */
     width: 300px; /* Adjust size */
@@ -187,12 +187,12 @@ img {
 
 /* Align Dentsu logo to the LEFT of the timeline */
 .company-logo-left {
-    left: -25%; /* Moves it left of the timeline */
+    left: -15%; /* Moves it left of the timeline */
 }
 
 /* Align Veritas logo to the RIGHT of the timeline */
 .company-logo-right {
-    right: -25%; /* Moves it right of the timeline */
+    right: -15%; /* Moves it right of the timeline */
 }
 
 /* Adjust logo size */
