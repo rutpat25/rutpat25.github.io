@@ -57,7 +57,3 @@ To customize this portfolio:
 - Smooth scrolling navigation
 - Scroll-triggered reveal animations
 
-## License
-
-This project is open source and available under the [MIT License](LICENSE).
-
