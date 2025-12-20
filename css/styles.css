@@ -768,6 +768,26 @@ section {
   padding-bottom: 0;
 }
 
+/* Company Logo Floating */
+.timeline-item .company-logo-float {
+  position: absolute;
+  left: -120px;
+  top: 0;
+  width: 80px;
+  height: 80px;
+  background: white;
+  border-radius: 12px;
+  padding: 12px;
+  box-shadow: var(--shadow-lg);
+  display: none; /* Hidden on mobile */
+}
+
+.timeline-item .company-logo-float img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
 .timeline-marker {
   position: absolute;
   left: -6px;
@@ -826,12 +846,13 @@ section {
 }
 
 .company-icon {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   object-fit: contain;
   background: white;
   padding: 4px;
   border-radius: 6px;
+  display: inline-block; /* Show inline on mobile */
 }
 
 .timeline-location {
@@ -1240,6 +1261,15 @@ section {
 }
 
 @media (min-width: 1024px) {
+  /* Show floating logos on desktop, hide inline icons */
+  .timeline-item .company-logo-float {
+    display: block;
+  }
+
+  .timeline-item .company-icon {
+    display: none;
+  }
+
   .timeline::before {
     left: 50%;
     transform: translateX(-50%);
@@ -1255,6 +1285,17 @@ section {
     margin-left: 50%;
     padding-left: 3rem;
     padding-right: 0;
+  }
+
+  /* Position floating logo on left side */
+  .timeline-item .company-logo-float {
+    left: -120px;
+  }
+
+  /* Position floating logo on right side for even items */
+  .timeline-item:nth-child(even) .company-logo-float {
+    left: auto;
+    right: -120px;
   }
 
   .timeline-marker {
