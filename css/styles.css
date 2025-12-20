@@ -159,7 +159,7 @@ img {
 
 .company-logo {
     position: absolute;
-    left: 105%;  /* Move it right of the timeline line */
+    display: none; /* Hide on mobile by default */
     top: 50%;
     transform: translateY(-50%); /* Center vertically */
     width: 120px; /* Adjust size */
@@ -188,12 +188,12 @@ img {
 
 /* Align Dentsu logo to the LEFT of the timeline */
 .company-logo-left {
-    left: -25%; /* Moves it left of the timeline */
+    display: none; /* Hide on mobile by default */
 }
 
 /* Align Veritas logo to the RIGHT of the timeline */
 .company-logo-right {
-    right: -25%; /* Moves it right of the timeline */
+    display: none; /* Hide on mobile by default */
 }
 
 /* Adjust logo size */
@@ -1128,9 +1128,23 @@ section {
 
 @media (min-width: 768px) {
   .company-logo {
-        left: 95%;  /* Reduce distance on small screens */
-        width: 120px;  /* Resize */
+        display: block; /* Show on desktop */
+        left: calc(50% + 300px);  /* Position to the right of the card */
+        width: 100px;
     }
+
+  .company-logo-left {
+        display: block; /* Show on desktop */
+        left: calc(50% - 500px); /* Position to the left */
+        max-width: 150px;
+    }
+
+  .company-logo-right {
+        display: block; /* Show on desktop */
+        right: calc(50% - 500px); /* Position to the right */
+        max-width: 150px;
+    }
+
   .experience-timeline::before {
     left: 50%;
   }
@@ -1181,6 +1195,24 @@ section {
     left: auto;
     right: 0;
   }
+}
+
+/* Larger screens - better logo positioning */
+@media (min-width: 1200px) {
+  .company-logo {
+        left: calc(50% + 350px);
+        width: 120px;
+    }
+
+  .company-logo-left {
+        left: calc(50% - 600px);
+        max-width: 180px;
+    }
+
+  .company-logo-right {
+        right: calc(50% - 600px);
+        max-width: 180px;
+    }
 }
 
 /* Projects Section */
