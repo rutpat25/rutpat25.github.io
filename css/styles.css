@@ -742,131 +742,124 @@ section {
 }
 
 /* ===== Experience Section ===== */
-.timeline {
-  position: relative;
+.experience-list {
   max-width: 900px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
-.timeline::before {
-  content: '';
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 2px;
-  background: linear-gradient(to bottom, var(--primary), var(--secondary));
-}
-
-.timeline-item {
-  position: relative;
-  padding-left: 3rem;
-  padding-bottom: 3rem;
-}
-
-.timeline-item:last-child {
-  padding-bottom: 0;
-}
-
-/* Company Logo Floating */
-.timeline-item .company-logo-float {
-  position: absolute;
-  left: -120px;
-  top: 0;
-  width: 80px;
-  height: 80px;
-  background: white;
-  border-radius: 12px;
-  padding: 12px;
-  box-shadow: var(--shadow-lg);
-  display: none; /* Hidden on mobile */
-}
-
-.timeline-item .company-logo-float img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-
-.timeline-marker {
-  position: absolute;
-  left: -6px;
-  top: 0;
-  width: 14px;
-  height: 14px;
-  border-radius: 50%;
-  background: var(--primary);
-  box-shadow: 0 0 0 4px var(--bg-primary), 0 0 0 6px var(--primary);
-  animation: pulse-marker 2s infinite;
-}
-
-@keyframes pulse-marker {
-  0%, 100% { box-shadow: 0 0 0 4px var(--bg-primary), 0 0 0 6px var(--primary); }
-  50% { box-shadow: 0 0 0 4px var(--bg-primary), 0 0 0 10px rgba(99, 102, 241, 0.3); }
-}
-
-.timeline-content {
+.experience-card {
   background: var(--bg-secondary);
-  padding: 2rem;
   border-radius: 16px;
   border: 1px solid rgba(255, 255, 255, 0.05);
+  overflow: hidden;
   transition: var(--transition-base);
 }
 
-.timeline-content:hover {
+.experience-card:hover {
   border-color: var(--primary);
-  transform: translateX(10px);
   box-shadow: var(--shadow-lg);
 }
 
-.timeline-date {
-  display: inline-block;
-  font-size: 0.875rem;
-  color: var(--primary-light);
-  background: rgba(99, 102, 241, 0.1);
-  padding: 0.5rem 1rem;
-  border-radius: 50px;
-  margin-bottom: 1rem;
-  font-weight: 600;
+.experience-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  cursor: pointer;
+  user-select: none;
 }
 
-.timeline-title {
-  font-size: 1.5rem;
+.experience-header:hover {
+  background: rgba(99, 102, 241, 0.05);
+}
+
+.experience-main {
+  flex: 1;
+}
+
+.experience-role {
+  font-size: 1.25rem;
   margin-bottom: 0.5rem;
+  font-weight: 700;
 }
 
-.timeline-company {
+.experience-company {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+}
+
+.experience-meta {
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  font-size: 1.125rem;
-  color: var(--text-secondary);
-  margin-bottom: 0.5rem;
-  font-weight: 600;
-}
-
-.company-icon {
-  width: 28px;
-  height: 28px;
-  object-fit: contain;
-  background: white;
-  padding: 4px;
-  border-radius: 6px;
-  display: inline-block; /* Show inline on mobile */
-}
-
-.timeline-location {
+  flex-wrap: wrap;
+  font-size: 0.875rem;
   color: var(--text-tertiary);
-  font-size: 0.95rem;
-  margin-bottom: 1.5rem;
 }
 
-.timeline-list {
+.experience-date {
+  color: var(--primary-light);
+  font-weight: 500;
+}
+
+.experience-divider {
+  color: var(--text-tertiary);
+  opacity: 0.5;
+}
+
+.experience-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.1);
+  border: none;
+  color: var(--primary-light);
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: var(--transition-base);
+  flex-shrink: 0;
+}
+
+.experience-toggle:hover {
+  background: var(--primary);
+  color: white;
+  transform: scale(1.1);
+}
+
+.experience-toggle i {
+  transition: transform var(--transition-base);
+}
+
+.experience-card[data-expanded="true"] .experience-toggle i {
+  transform: rotate(180deg);
+}
+
+.experience-details {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease-out, padding 0.4s ease-out;
+  padding: 0 1.5rem;
+}
+
+.experience-card[data-expanded="true"] .experience-details {
+  max-height: 2000px;
+  padding: 0 1.5rem 1.5rem 1.5rem;
+}
+
+.experience-achievements {
   list-style: none;
   margin-bottom: 1.5rem;
 }
 
-.timeline-list li {
+.experience-achievements li {
   position: relative;
   padding-left: 1.5rem;
   color: var(--text-secondary);
@@ -874,7 +867,7 @@ section {
   line-height: 1.7;
 }
 
-.timeline-list li::before {
+.experience-achievements li::before {
   content: '▹';
   position: absolute;
   left: 0;
@@ -882,7 +875,7 @@ section {
   font-weight: bold;
 }
 
-.timeline-tags {
+.experience-tags {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
@@ -1261,56 +1254,7 @@ section {
 }
 
 @media (min-width: 1024px) {
-  /* Show floating logos on desktop, hide inline icons */
-  .timeline-item .company-logo-float {
-    display: block;
-  }
-
-  .timeline-item .company-icon {
-    display: none;
-  }
-
-  .timeline::before {
-    left: 50%;
-    transform: translateX(-50%);
-  }
-
-  .timeline-item {
-    width: 50%;
-    padding-left: 0;
-    padding-right: 3rem;
-  }
-
-  .timeline-item:nth-child(even) {
-    margin-left: 50%;
-    padding-left: 3rem;
-    padding-right: 0;
-  }
-
-  /* Position floating logo on left side */
-  .timeline-item .company-logo-float {
-    left: -120px;
-  }
-
-  /* Position floating logo on right side for even items */
-  .timeline-item:nth-child(even) .company-logo-float {
-    left: auto;
-    right: -120px;
-  }
-
-  .timeline-marker {
-    left: auto;
-    right: -6px;
-  }
-
-  .timeline-item:nth-child(even) .timeline-marker {
-    right: auto;
-    left: -6px;
-  }
-
-  .timeline-item:nth-child(even) .timeline-content {
-    text-align: left;
-  }
+  /* No additional changes needed for experience cards on desktop */
 }
 
 /* ===== Animations ===== */

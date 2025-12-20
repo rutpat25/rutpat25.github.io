@@ -183,6 +183,28 @@ if (typingElement) {
   setTimeout(typeWriter, 500);
 }
 
+// Experience Accordion
+const experienceCards = document.querySelectorAll('.experience-card');
+
+experienceCards.forEach(card => {
+  const header = card.querySelector('.experience-header');
+  const toggle = card.querySelector('.experience-toggle');
+
+  header.addEventListener('click', () => {
+    const isExpanded = card.getAttribute('data-expanded') === 'true';
+
+    // Close all other cards
+    experienceCards.forEach(otherCard => {
+      if (otherCard !== card) {
+        otherCard.setAttribute('data-expanded', 'false');
+      }
+    });
+
+    // Toggle current card
+    card.setAttribute('data-expanded', !isExpanded);
+  });
+});
+
 // Console Easter Egg
 console.log('%c👋 Hey there!', 'font-size: 24px; font-weight: bold; color: #6366f1;');
 console.log('%cLooking at the code? I like your style!', 'font-size: 14px; color: #cbd5e1;');
