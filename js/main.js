@@ -95,23 +95,73 @@ function animateSkillBars() {
   })
 }
 
+// EmailJS Configuration
+// To use this form, you need to:
+// 1. Sign up at https://www.emailjs.com/
+// 2. Create an email service (Gmail, Outlook, etc.)
+// 3. Create an email template with variables: {{from_name}}, {{from_email}}, {{message}}
+// 4. Replace 'YOUR_PUBLIC_KEY', 'YOUR_SERVICE_ID', and 'YOUR_TEMPLATE_ID' below with your actual values
+
+const EMAILJS_PUBLIC_KEY = 'YOUR_PUBLIC_KEY'; // Replace with your EmailJS public key
+const EMAILJS_SERVICE_ID = 'YOUR_SERVICE_ID'; // Replace with your service ID
+const EMAILJS_TEMPLATE_ID = 'YOUR_TEMPLATE_ID'; // Replace with your template ID
+
+// Initialize EmailJS (only if credentials are configured)
+if (typeof emailjs !== 'undefined' && EMAILJS_PUBLIC_KEY !== 'YOUR_PUBLIC_KEY') {
+  emailjs.init(EMAILJS_PUBLIC_KEY);
+}
+
 // Form submission handling
 document.getElementById("contact-form").addEventListener("submit", function (e) {
   e.preventDefault()
 
-  // Get form values
-  const name = document.getElementById("name").value
-  const email = document.getElementById("email").value
-  const message = document.getElementById("message").value
+  const submitButton = this.querySelector('button[type="submit"]');
+  const originalButtonText = submitButton.innerHTML;
 
-  // In a real implementation, you would send this data to a server
-  // For GitHub Pages, you could use a service like Formspree or EmailJS
+  // Check if EmailJS is configured
+  if (typeof emailjs === 'undefined' || EMAILJS_PUBLIC_KEY === 'YOUR_PUBLIC_KEY') {
+    // Fallback to mailto if EmailJS is not configured
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const message = document.getElementById("message").value;
 
-  // For now, just show an alert
-  alert(`Thank you for your message, ${name}! I'll get back to you soon.`)
+    const mailtoLink = `mailto:rutwijpatil25@gmail.com?subject=Portfolio Contact from ${encodeURIComponent(name)}&body=${encodeURIComponent(message)}%0D%0A%0D%0AFrom: ${encodeURIComponent(email)}`;
+    window.location.href = mailtoLink;
 
-  // Reset the form
-  this.reset()
+    alert(`Opening your email client... Alternatively, you can email directly at rutwijpatil25@gmail.com`);
+    this.reset();
+    return;
+  }
+
+  // Disable submit button and show loading state
+  submitButton.disabled = true;
+  submitButton.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
+
+  // Prepare template parameters
+  const templateParams = {
+    from_name: document.getElementById("name").value,
+    from_email: document.getElementById("email").value,
+    message: document.getElementById("message").value
+  };
+
+  // Send email using EmailJS
+  emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams)
+    .then(function(response) {
+      console.log('SUCCESS!', response.status, response.text);
+      alert(`Thank you for your message, ${templateParams.from_name}! I'll get back to you soon.`);
+      document.getElementById("contact-form").reset();
+
+      // Reset button
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
+    }, function(error) {
+      console.log('FAILED...', error);
+      alert('Oops! Something went wrong. Please try emailing directly at rutwijpatil25@gmail.com');
+
+      // Reset button
+      submitButton.disabled = false;
+      submitButton.innerHTML = originalButtonText;
+    });
 })
 
 // Smooth scrolling for all anchor links

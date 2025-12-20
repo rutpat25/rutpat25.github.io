@@ -159,10 +159,10 @@ img {
 
 .company-logo {
     position: absolute;
-    left: 900%;  /* Move it right of the timeline line */
+    left: 105%;  /* Move it right of the timeline line */
     top: 50%;
     transform: translateY(-50%); /* Center vertically */
-    width: 300px; /* Adjust size */
+    width: 120px; /* Adjust size */
     height: auto;
 }
 
