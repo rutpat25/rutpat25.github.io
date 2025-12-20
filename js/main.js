@@ -155,6 +155,34 @@ document.addEventListener('mousemove', (e) => {
   });
 });
 
+// Typing Animation for Name
+const typingElement = document.querySelector('.gradient-text');
+if (typingElement) {
+  const originalText = 'Rutwij Patil';
+  typingElement.textContent = '';
+
+  // Add cursor
+  typingElement.style.borderRight = '3px solid';
+  typingElement.style.paddingRight = '5px';
+  typingElement.style.animation = 'blink-cursor 0.8s step-end infinite';
+
+  let charIndex = 0;
+
+  function typeWriter() {
+    if (charIndex < originalText.length) {
+      typingElement.textContent += originalText.charAt(charIndex);
+      charIndex++;
+      setTimeout(typeWriter, 100); // Typing speed (100ms per character)
+    } else {
+      // Keep cursor blinking after typing is complete
+      typingElement.style.animation = 'blink-cursor 0.8s step-end infinite';
+    }
+  }
+
+  // Start typing after a short delay
+  setTimeout(typeWriter, 500);
+}
+
 // Console Easter Egg
 console.log('%c👋 Hey there!', 'font-size: 24px; font-weight: bold; color: #6366f1;');
 console.log('%cLooking at the code? I like your style!', 'font-size: 14px; color: #cbd5e1;');
