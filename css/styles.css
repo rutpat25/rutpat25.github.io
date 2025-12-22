@@ -736,6 +736,27 @@ section {
   flex: 1;
 }
 
+.experience-logo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 1.5rem;
+  flex-shrink: 0;
+}
+
+.experience-logo img {
+  width: 100px;
+  height: 100px;
+  object-fit: contain;
+  opacity: 0.8;
+  transition: var(--transition-base);
+}
+
+.experience-card:hover .experience-logo img {
+  opacity: 1;
+  transform: scale(1.05);
+}
+
 .experience-role {
   font-size: 1.25rem;
   margin-bottom: 0.5rem;
@@ -1165,6 +1186,13 @@ section {
 }
 
 /* ===== Responsive Design ===== */
+/* Mobile: Hide logos on small screens */
+@media (max-width: 767px) {
+  .experience-logo {
+    display: none;
+  }
+}
+
 @media (min-width: 768px) {
   .nav-menu {
     display: flex;
