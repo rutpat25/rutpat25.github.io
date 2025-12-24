@@ -1387,3 +1387,29 @@ body.dark-mode .mobile-social a {
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
+/* Fix stat numbers in dark mode */
+body.dark-mode .stat-number {
+  color: var(--text-primary);
+}
+
+/* Fix About Me section in dark mode */
+body.dark-mode .about-highlight {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Fix Featured Projects section in dark mode */
+body.dark-mode .section-tag {
+  background: rgba(30, 41, 59, 0.7);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  color: var(--text-secondary);
+}
+
+body.dark-mode .project-content {
+  background: rgba(30, 41, 59, 0.7);
+}
+
+body.dark-mode .project-overlay {
+  background: linear-gradient(to top, rgba(15, 23, 42, 0.95), transparent);
+}
