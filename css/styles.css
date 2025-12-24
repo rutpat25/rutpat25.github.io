@@ -1390,20 +1390,32 @@ body.dark-mode .mobile-social a {
 
 /* Fix stat numbers in dark mode */
 body.dark-mode .stat-number {
-  color: var(--text-primary);
+  background: linear-gradient(135deg, #60a5fa, #a78bfa);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 /* Fix About Me section in dark mode */
-body.dark-mode .about-highlight {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+body.dark-mode .highlight-item {
+  background: rgba(96, 165, 250, 0.05);
+  border: 1px solid rgba(96, 165, 250, 0.1);
 }
 
-/* Fix Featured Projects section in dark mode */
+body.dark-mode .highlight-item:hover {
+  background: rgba(96, 165, 250, 0.1);
+  border-color: rgba(96, 165, 250, 0.3);
+}
+
+body.dark-mode .highlight-item i {
+  color: #93c5fd;
+}
+
+/* Fix section tags in dark mode */
 body.dark-mode .section-tag {
-  background: rgba(30, 41, 59, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: var(--text-secondary);
+  background: rgba(96, 165, 250, 0.1);
+  border: 1px solid rgba(96, 165, 250, 0.2);
+  color: #93c5fd;
 }
 
 body.dark-mode .project-content {
