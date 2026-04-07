@@ -4,25 +4,26 @@
 
 // ── Layout constants ──────────────────────────────────────────
 // Total scroll track: 800vh
-// Zone 0:   0  →  200vh  = Hero word-by-word reveal
-// Zone 1: 200  →  350vh  = About
-// Zone 2: 350  →  500vh  = Experience
-// Zone 3: 500  →  650vh  = Projects
-// Zone 4: 650  →  800vh  = Contact
+// Zone 0:   0%  → 25%   = Hero (200vh)
+// Zone 1:  25%  → 43.75% = About (150vh)
+// Zone 2: 43.75% → 62.5% = Experience (150vh)
+// Zone 3: 62.5% → 81.25% = Projects (150vh)
+// Zone 4: 81.25% → 100%  = Contact (150vh)
 
-const HERO_ZONE  = 0.25;   // first 25% of total scroll = hero reveal (200/800)
-const SLIDE_ZONES = [0.25, 0.4375, 0.625, 0.8125, 1.0]; // start % of each of the 4 post-hero slides
+const HERO_ZONE_END = 0.25;
+const CONTENT_ZONES = [
+  { start: 0.25,   end: 0.4375 },  // About
+  { start: 0.4375, end: 0.625  },  // Experience
+  { start: 0.625,  end: 0.8125 },  // Projects
+  { start: 0.8125, end: 1.0    },  // Contact
+];
 
-// Hero groups: 6 groups, evenly spaced across the hero zone (0 → HERO_ZONE)
-const HERO_GROUP_COUNT = 6;
-
-const slides  = Array.from(document.querySelectorAll('.slide'));
-const dots    = Array.from(document.querySelectorAll('.dot'));
-const navbar  = document.querySelector('.navbar');
+const slides     = Array.from(document.querySelectorAll('.slide'));
+const dots       = Array.from(document.querySelectorAll('.dot'));
+const navbar     = document.querySelector('.navbar');
 const heroGroups = Array.from(document.querySelectorAll('.hero-group'));
 
-// -1 = hero zone, 0-3 = about/exp/proj/contact
-let currentSection = -1;
+let currentSection = -1; // -1 = hero, 0-3 = content slides
 
 // ── Word splitter ─────────────────────────────────────────────
 function splitWords(el) {
@@ -34,43 +35,80 @@ function splitWords(el) {
     .join('');
 }
 
-const WORD_SELECTORS = [
-  '.section-title', '.section-tag', '.about-text',
-  '.skills-title', '.contact-description',
-];
-const BLOCK_SELECTORS = [
-  '.skill-card', '.experience-card', '.project-card',
-  '.highlight-item', '.contact-item', '.contact-form-wrapper',
-];
+// ── Build scroll-reveal groups for each content slide ────────
+// Each element tagged with data-reveal-group="N" will reveal
+// when scroll progress through that slide's zone passes N/totalGroups
 
-function prepareSlide(slideEl) {
-  slideEl.querySelectorAll(WORD_SELECTORS.join(',')).forEach(el => splitWords(el));
-  slideEl.querySelectorAll(BLOCK_SELECTORS.join(',')).forEach(el => {
-    if (!el.classList.contains('slide-block')) el.classList.add('slide-block');
+function buildSlideGroups(slideEl) {
+  // Collect all animatable elements in DOM order
+  const allItems = [];
+
+  // Section header words
+  slideEl.querySelectorAll('.section-tag, .section-title').forEach(el => {
+    splitWords(el);
+    el.querySelectorAll('.word').forEach(w => allItems.push({ el: w, type: 'word' }));
+  });
+
+  // Body text words
+  slideEl.querySelectorAll('.about-text, .skills-title, .contact-description').forEach(el => {
+    splitWords(el);
+    el.querySelectorAll('.word').forEach(w => allItems.push({ el: w, type: 'word' }));
+  });
+
+  // Block elements (cards, items, form)
+  slideEl.querySelectorAll(
+    '.skill-card, .experience-card, .project-card, .highlight-item, .contact-item, .contact-form-wrapper'
+  ).forEach(el => allItems.push({ el, type: 'block' }));
+
+  // Tag each item with its reveal threshold (0→1 within the slide zone)
+  const total = allItems.length;
+  allItems.forEach((item, i) => {
+    item.threshold = total > 1 ? i / (total - 1) * 0.85 : 0; // spread across 0→85% of zone
+    item.el.dataset.revealThreshold = item.threshold;
+    item.el.classList.remove('revealed');
+    // Ensure base hidden styles
+    if (item.type === 'word') {
+      item.el.classList.add('word');
+    } else {
+      item.el.classList.add('slide-block');
+    }
+  });
+
+  return allItems;
+}
+
+// Store item lists per slide index (0=about, 1=exp, 2=proj, 3=contact)
+const slideItems = [null, null, null, null];
+
+function prepareAllSlides() {
+  slides.slice(1).forEach((slideEl, i) => {
+    slideItems[i] = buildSlideGroups(slideEl);
   });
 }
 
-function revealContent(slideEl) {
-  const words  = Array.from(slideEl.querySelectorAll('.word'));
-  const blocks = Array.from(slideEl.querySelectorAll('.slide-block'));
+// ── Update a content slide's reveal based on progress ────────
+function updateSlideReveal(slideIndex, progress) {
+  // progress = 0→1 within this slide's zone
+  const items = slideItems[slideIndex];
+  if (!items) return;
 
-  words.forEach(w  => w.classList.remove('revealed'));
-  blocks.forEach(b => b.classList.remove('revealed'));
-
-  words.forEach((w, i)  => setTimeout(() => w.classList.add('revealed'), Math.min(i * 30, 700)));
-  blocks.forEach((b, i) => setTimeout(() => b.classList.add('revealed'), 200 + i * 80));
+  items.forEach(item => {
+    if (progress >= item.threshold) {
+      item.el.classList.add('revealed');
+    } else {
+      item.el.classList.remove('revealed');
+    }
+  });
 }
 
 // ── Hero scroll reveal ────────────────────────────────────────
 function updateHeroReveal(progress) {
-  // progress = 0→1 within the hero zone only
-  // Each group gets revealed when progress passes its threshold
+  // 6 groups, each unlocks at i/6 of hero progress
+  const GROUP_COUNT = 6;
   heroGroups.forEach((group, i) => {
-    const threshold = i / HERO_GROUP_COUNT;
+    const threshold = i / GROUP_COUNT;
     if (progress >= threshold) {
       group.classList.add('revealed');
-
-      // Word-by-word inside groups 0, 1, 2 (text groups)
       if (i < 3) {
         group.querySelectorAll('.word').forEach((w, wi) => {
           setTimeout(() => w.classList.add('revealed'), wi * 40);
@@ -82,7 +120,7 @@ function updateHeroReveal(progress) {
     }
   });
 
-  // Show navbar only when hero is fully done (progress >= 0.95)
+  // Navbar fades in after hero is fully revealed
   if (progress >= 0.95) {
     navbar.classList.remove('navbar-hidden');
     navbar.classList.add('navbar-visible');
@@ -92,43 +130,38 @@ function updateHeroReveal(progress) {
   }
 }
 
-// ── Slide transitions ─────────────────────────────────────────
-function activateSlide(index) {
+// ── Slide visibility (just opacity/transform, no content reveal) ─
+function setActiveSlide(index) {
+  // index: -1=hero, 0-3=content
   if (index === currentSection) return;
   const prev = currentSection;
   currentSection = index;
 
-  // Deactivate hero slide if moving to content slides
   const heroSlide = document.getElementById('slide-hero');
 
   if (index === -1) {
-    // Back to hero
-    slides.forEach(s => { s.classList.remove('active'); s.classList.add('leaving'); });
+    slides.forEach(s => {
+      s.classList.remove('active');
+      s.classList.add('leaving');
+    });
     setTimeout(() => slides.forEach(s => s.classList.remove('leaving')), 700);
     heroSlide.classList.add('active');
     dots.forEach(d => d.classList.remove('active'));
     dots[0].classList.add('active');
-    navbar.classList.add('scrolled');
   } else {
-    // Activate a content slide
     slides.forEach((s, i) => {
-      if (i === index + 1) {
-        // +1 because slides[0] is hero, slides[1] is about, etc.
+      const isTarget = i === index + 1; // +1: slides[0]=hero, slides[1]=about
+      if (isTarget) {
         s.classList.remove('leaving');
         s.classList.add('active');
-      } else {
-        if (s.classList.contains('active')) {
-          s.classList.remove('active');
-          s.classList.add('leaving');
-          setTimeout(() => s.classList.remove('leaving'), 700);
-        }
+      } else if (s.classList.contains('active')) {
+        s.classList.remove('active');
+        s.classList.add('leaving');
+        setTimeout(() => s.classList.remove('leaving'), 700);
       }
     });
-
     dots.forEach(d => d.classList.remove('active'));
     dots[index + 1].classList.add('active');
-
-    revealContent(slides[index + 1]);
     navbar.classList.add('scrolled');
   }
 }
@@ -139,26 +172,30 @@ function onScroll() {
   const maxScroll = track.scrollHeight - window.innerHeight;
   if (maxScroll <= 0) return;
 
-  const p = Math.min(window.scrollY / maxScroll, 1); // 0→1
+  const p = Math.min(window.scrollY / maxScroll, 1);
 
-  if (p < HERO_ZONE) {
-    // Hero reveal zone
-    const heroProgress = p / HERO_ZONE; // 0→1 within hero
-    updateHeroReveal(heroProgress);
-
-    if (currentSection !== -1) {
-      activateSlide(-1);
-      // Make hero slide active again
-      const heroSlide = document.getElementById('slide-hero');
-      heroSlide.classList.add('active');
-    }
+  if (p < HERO_ZONE_END) {
+    // Hero zone
+    const heroP = p / HERO_ZONE_END;
+    updateHeroReveal(heroP);
+    setActiveSlide(-1);
+    document.getElementById('slide-hero').classList.add('active');
   } else {
-    // Content slides
-    // Map p from HERO_ZONE→1 to 0→3 (4 slides)
-    const slideP = (p - HERO_ZONE) / (1 - HERO_ZONE);
-    const index = Math.min(Math.floor(slideP * 4), 3);
+    // Content zones
+    CONTENT_ZONES.forEach((zone, i) => {
+      if (p >= zone.start && p < zone.end) {
+        const zoneP = (p - zone.start) / (zone.end - zone.start); // 0→1 within zone
+        setActiveSlide(i);
+        updateSlideReveal(i, zoneP);
+      }
+    });
 
-    if (index !== currentSection) activateSlide(index);
+    // Edge: last slide at exactly 100%
+    if (p >= CONTENT_ZONES[3].start) {
+      const zoneP = (p - CONTENT_ZONES[3].start) / (1 - CONTENT_ZONES[3].start);
+      setActiveSlide(3);
+      updateSlideReveal(3, Math.min(zoneP, 1));
+    }
   }
 }
 
@@ -166,18 +203,16 @@ window.addEventListener('scroll', onScroll, { passive: true });
 
 // ── Dot + nav clicks ──────────────────────────────────────────
 function jumpToSlide(index) {
-  // index 0 = hero, 1 = about, 2 = exp, 3 = proj, 4 = contact
   const track = document.querySelector('.scroll-track');
-  let target;
+  const maxScroll = track.scrollHeight - window.innerHeight;
+  let p;
   if (index === 0) {
-    target = 0;
+    p = 0;
   } else {
-    // slide index in content: 1→about, 2→exp, 3→proj, 4→contact
-    const contentIndex = index - 1; // 0-3
-    const p = HERO_ZONE + (contentIndex / 4) * (1 - HERO_ZONE) + 0.01;
-    target = p * (track.scrollHeight - window.innerHeight);
+    const zone = CONTENT_ZONES[index - 1];
+    p = zone.start + 0.01;
   }
-  window.scrollTo({ top: target, behavior: 'smooth' });
+  window.scrollTo({ top: p * maxScroll, behavior: 'smooth' });
 }
 
 dots.forEach(dot => {
@@ -254,13 +289,13 @@ document.getElementById('contact-form')?.addEventListener('submit', async functi
 });
 
 // ── Init ──────────────────────────────────────────────────────
-// Prepare content slides
-slides.slice(1).forEach(s => prepareSlide(s));
-
-// Split words inside hero text groups too
+// Split hero text groups
 heroGroups.slice(0, 3).forEach(g => splitWords(g));
 
-// Hero slide visible but all groups hidden (scroll will reveal)
+// Build reveal item lists for all content slides
+prepareAllSlides();
+
+// Hero slide active on load, all groups hidden
 slides[0].classList.add('active');
 dots[0].classList.add('active');
 
