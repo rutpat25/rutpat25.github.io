@@ -132,11 +132,11 @@ img {
 }
 
 .navbar.scrolled {
-  background: rgba(255, 255, 255, 0.85);
+  background: rgba(10,10,10,0.75);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border-bottom: 1px solid rgba(0,0,0,0.06);
-  box-shadow: 0 4px 24px rgba(0,0,0,0.06);
+  border-bottom: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
 }
 
 .nav-container {
@@ -152,7 +152,7 @@ img {
   font-family: var(--font-display);
   font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-primary);
+  color: #fff;
   transition: var(--transition-base);
   letter-spacing: -0.02em;
 }
@@ -169,7 +169,7 @@ img {
 
 .nav-item {
   position: relative;
-  color: var(--text-secondary);
+  color: rgba(255,255,255,0.65);
   font-weight: 500;
   font-size: 0.95rem;
   transition: var(--transition-base);
@@ -187,7 +187,7 @@ img {
 }
 
 .nav-item:hover {
-  color: var(--text-primary);
+  color: #fff;
 }
 
 .nav-item:hover::after {
@@ -236,7 +236,7 @@ img {
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(255, 255, 255, 0.98);
+  background: rgba(10,10,10,0.97);
   backdrop-filter: blur(10px);
   z-index: 9999;
   display: flex;
@@ -263,7 +263,7 @@ img {
   font-size: 2.5rem;
   background: none;
   border: none;
-  color: var(--text-primary);
+  color: rgba(255,255,255,0.8);
   cursor: pointer;
   width: 50px;
   height: 50px;
@@ -284,7 +284,7 @@ img {
   font-family: var(--font-display);
   font-weight: 600;
   margin: 1.5rem 0;
-  color: var(--text-primary);
+  color: rgba(255,255,255,0.85);
   transition: var(--transition-base);
 }
 
@@ -1398,21 +1398,12 @@ section {
   pointer-events: all;
 }
 
-/* Hero bg variants */
-#slide-hero {
-  background: var(--bg-primary);
+/* All slides: uniform dark background */
+.slide {
+  background: #0a0a0a !important;
 }
-#slide-about {
-  background: white;
-}
-#slide-experience {
-  background: var(--bg-secondary);
-}
-#slide-projects {
-  background: white;
-}
+
 #slide-contact {
-  background: var(--bg-secondary);
   justify-content: flex-start;
   padding-bottom: 0;
 }
@@ -1467,50 +1458,120 @@ section {
   transform: translateY(0);
 }
 
-/* Hero slide starts as pure black */
-#slide-hero {
-  background: #000 !important;
-}
+/* ===== Global dark theme for all slides ===== */
 
-/* Hero text colours on black bg */
-#slide-hero .hero-title,
-#slide-hero .hero-subtitle {
-  color: #fff;
-}
+/* Hero bg */
+#slide-hero .hero-bg { background: #0a0a0a !important; }
 
-#slide-hero .gradient-text {
-  color: #fff;
-}
+/* All text on dark */
+.slide h1, .slide h2, .slide h3, .slide h4 { color: #fff; }
+.slide p, .slide .about-text, .slide .hero-description,
+.slide .contact-description, .slide .project-description,
+.slide .experience-company, .slide .experience-date,
+.slide .experience-location { color: rgba(255,255,255,0.62); }
 
-#slide-hero .hero-description {
-  color: rgba(255,255,255,0.65);
-}
+.slide .hero-subtitle     { color: rgba(255,255,255,0.8); }
+.slide .gradient-text     { color: #fff; }
+.slide .section-tag       { color: var(--secondary-light); background: rgba(41,151,255,0.1); border-color: rgba(41,151,255,0.25); }
 
-#slide-hero .stat-number {
+/* Stats */
+.slide .stat-number {
   background: linear-gradient(135deg, #fff, var(--secondary-light));
   -webkit-background-clip: text;
   background-clip: text;
   -webkit-text-fill-color: transparent;
 }
+.slide .stat-label { color: rgba(255,255,255,0.45); }
 
-#slide-hero .stat-label {
-  color: rgba(255,255,255,0.5);
+/* Cards */
+.slide .skill-card,
+.slide .experience-card,
+.slide .project-card,
+.slide .contact-item,
+.slide .contact-form-wrapper {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+}
+.slide .skill-card:hover,
+.slide .experience-card:hover,
+.slide .project-card:hover,
+.slide .contact-item:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.2);
 }
 
-/* Override the hero-bg gradient on black */
-#slide-hero .hero-bg {
-  background: #000 !important;
+/* Highlight items */
+.slide .highlight-item {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+}
+.slide .highlight-item i  { color: var(--secondary-light); }
+.slide .highlight-item span { color: rgba(255,255,255,0.75); }
+
+/* Tags */
+.slide .tag {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.65);
 }
 
-/* Buttons on black background */
-#slide-hero .btn-secondary {
-  color: rgba(255,255,255,0.85);
-  border-color: rgba(255,255,255,0.4);
-}
-#slide-hero .btn-secondary:hover {
+/* Experience achievements */
+.slide .experience-achievements li { color: rgba(255,255,255,0.65); }
+.slide .experience-achievements li::before { color: var(--secondary-light); }
+
+/* Experience toggle button */
+.slide .experience-toggle {
   background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.7);
+  color: rgba(255,255,255,0.6);
 }
+
+/* Form inputs */
+.slide .form-group label  { color: rgba(255,255,255,0.85); }
+.slide .form-group input,
+.slide .form-group textarea {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.slide .form-group input:focus,
+.slide .form-group textarea:focus {
+  background: rgba(255,255,255,0.1);
+  border-color: var(--secondary-light);
+}
+.slide .form-group input::placeholder,
+.slide .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+/* Project category label */
+.slide .project-category { color: var(--secondary-light); }
+
+/* Contact value/label */
+.slide .contact-label { color: rgba(255,255,255,0.45); }
+.slide .contact-value { color: rgba(255,255,255,0.9); }
+
+/* Skill icon bg stays blue */
+.slide .skill-icon { background: var(--secondary); }
+
+/* Secondary button on dark */
+.slide .btn-secondary {
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.35);
+}
+.slide .btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.65);
+}
+
+/* Footer on dark */
+.slide .footer {
+  background: rgba(255,255,255,0.03);
+  border-top-color: rgba(255,255,255,0.08);
+}
+.slide .footer-brand h3,
+.slide .footer-brand p   { color: rgba(255,255,255,0.6); }
+.slide .footer-links a   { color: rgba(255,255,255,0.5); }
+.slide .footer-links a:hover { color: #fff; }
+.slide .footer-social a  { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+.slide .footer-bottom    { color: rgba(255,255,255,0.3); border-top-color: rgba(255,255,255,0.08); }
 
 /* Cards / blocks that animate in as units */
 .slide-block {
