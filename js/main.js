@@ -24,14 +24,14 @@ function initHeroReveal() {
 
   function update() {
     const rect = hero.getBoundingClientRect();
-    // How far we've scrolled past the hero top (0 → hero.offsetHeight)
     const scrolled = -rect.top;
-    const total = hero.offsetHeight; // 100vh
-    // We want groups to spread across 0 → 80% of that height
-    const progress = Math.min(Math.max(scrolled / (total * 0.8), 0), 1);
+    const total = hero.offsetHeight;
+    // Only start revealing after user has scrolled at least 40px
+    const progress = Math.min(Math.max((scrolled - 40) / (total * 0.8), 0), 1);
 
     heroGroups.forEach((group, i) => {
-      const threshold = i / GROUP_COUNT;
+      // Spread groups across 0.05 → 1.0 so group 0 needs real scroll
+      const threshold = 0.05 + (i / GROUP_COUNT) * 0.95;
       if (progress >= threshold) {
         group.classList.add('revealed');
         if (i < 3) {
@@ -68,10 +68,13 @@ function initSectionReveal(sectionEl) {
     items.push(el);
   });
 
-  // Reveal staggered when section enters viewport
+  // Only reveal after page has had a chance to settle (not on initial load)
+  let ready = false;
+  setTimeout(() => { ready = true; }, 300);
+
   const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
-      if (entry.isIntersecting) {
+      if (entry.isIntersecting && ready) {
         items.forEach((item, i) => {
           setTimeout(() => item.classList.add('revealed'), i * 35);
         });
