@@ -70,23 +70,9 @@ body {
   color: white;
 }
 
-::-webkit-scrollbar {
-  width: 12px;
-}
-
-::-webkit-scrollbar-track {
-  background: var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb {
-  background: var(--text-tertiary);
-  border-radius: 6px;
-  border: 3px solid var(--bg-primary);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-secondary);
-}
+/* Hide all scrollbars globally */
+::-webkit-scrollbar { display: none; }
+* { scrollbar-width: none; -ms-overflow-style: none; }
 
 /* ===== Typography ===== */
 h1, h2, h3, h4, h5, h6 {
@@ -1321,20 +1307,30 @@ section {
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  padding-top: 80px; /* below navbar */
+  padding-top: 80px;
   overflow-y: auto;
   background: var(--bg-primary);
 
-  /* Hidden by default */
+  /* Hidden: scaled down slightly + invisible */
   opacity: 0;
+  transform: scale(0.97) translateY(24px);
   pointer-events: none;
-  transition: opacity 0.75s cubic-bezier(0.16, 1, 0.3, 1);
-  will-change: opacity;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-/* Active slide */
+/* Outgoing slide: shrink up and fade */
+.slide.leaving {
+  opacity: 0;
+  transform: scale(1.03) translateY(-20px);
+  pointer-events: none;
+}
+
+/* Active slide: full size, fully visible */
 .slide.active {
   opacity: 1;
+  transform: scale(1) translateY(0);
   pointer-events: all;
 }
 
@@ -1378,32 +1374,47 @@ section {
   margin: 0.4rem auto 0;
 }
 
-/* Slide-in animation for content when a slide becomes active */
-.slide.active .section-header,
-.slide.active .about-grid,
-.slide.active .experience-list,
-.slide.active .projects-grid,
-.slide.active .contact-wrapper {
-  animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+/* ===== Word-by-word reveal ===== */
+
+/* Each word wrapped in a span by JS — starts invisible */
+.word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.slide.active .hero-content {
-  animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.05s both;
+/* JS adds .revealed to trigger each word */
+.word.revealed {
+  opacity: 1;
+  transform: translateY(0);
 }
 
-.slide.active .hero-image {
-  animation: slideUp 0.7s cubic-bezier(0.16, 1, 0.3, 1) 0.15s both;
+/* Cards / blocks that animate in as units */
+.slide-block {
+  opacity: 0;
+  transform: translateY(32px);
+  transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-block.revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Hero image block */
+.hero-image.slide-block {
+  transform: scale(0.93) translateY(24px);
+}
+.hero-image.slide-block.revealed {
+  transform: scale(1) translateY(0);
 }
 
 @keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(40px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
 /* ===== Dot Navigation ===== */
@@ -1456,15 +1467,12 @@ body.dark-mode .dot:hover {
   .dot-nav { display: none; }
 }
 
-/* Make experience slide scrollable if content overflows */
+/* Make experience / projects slides scrollable if content overflows */
 #slide-experience .container,
 #slide-projects .container {
   max-height: calc(100vh - 100px);
   overflow-y: auto;
   padding-bottom: 2rem;
-  /* hide scrollbar visually but keep functional */
-  scrollbar-width: thin;
-  scrollbar-color: var(--text-tertiary) transparent;
 }
 
 /* Contact slide: allow footer to sit below form */
