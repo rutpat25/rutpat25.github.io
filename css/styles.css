@@ -1358,7 +1358,7 @@ section {
 }
 
 /* Stack order: later sections sit on top */
-#section-hero       { z-index: 1; }
+#section-hero       { z-index: 1; min-height: 200vh; }
 #section-about      { z-index: 2; }
 #section-experience { z-index: 3; }
 #section-projects   { z-index: 4; }

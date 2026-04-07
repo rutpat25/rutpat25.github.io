@@ -23,15 +23,14 @@ function initHeroReveal() {
   const GROUP_COUNT = heroGroups.length; // 6
 
   function update() {
-    const rect = hero.getBoundingClientRect();
-    const scrolled = -rect.top;
-    const total = hero.offsetHeight;
-    // Only start revealing after user has scrolled at least 40px
-    const progress = Math.min(Math.max((scrolled - 40) / (total * 0.8), 0), 1);
+    const scrolled = window.scrollY;
+    // Hero is 200vh tall; spread all 6 groups across 20px→(window.innerHeight*1.5)
+    const revealRange = window.innerHeight * 1.5;
+    const progress = Math.min(Math.max((scrolled - 20) / revealRange, 0), 1);
 
     heroGroups.forEach((group, i) => {
-      // Spread groups across 0.05 → 1.0 so group 0 needs real scroll
-      const threshold = 0.05 + (i / GROUP_COUNT) * 0.95;
+      // Group 0 starts at progress 0.03 (needs ~30px scroll), last group at ~0.9
+      const threshold = 0.03 + (i / GROUP_COUNT) * 0.87;
       if (progress >= threshold) {
         group.classList.add('revealed');
         if (i < 3) {
