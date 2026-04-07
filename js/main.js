@@ -20,7 +20,6 @@ const CONTENT_ZONES = [
 
 const slides     = Array.from(document.querySelectorAll('.slide'));
 const dots       = Array.from(document.querySelectorAll('.dot'));
-const navbar     = document.querySelector('.navbar');
 const heroGroups = Array.from(document.querySelectorAll('.hero-group'));
 
 let currentSection = -1; // -1 = hero, 0-3 = content slides
@@ -120,14 +119,6 @@ function updateHeroReveal(progress) {
     }
   });
 
-  // Navbar fades in after hero is fully revealed
-  if (progress >= 0.95) {
-    navbar.classList.remove('navbar-hidden');
-    navbar.classList.add('navbar-visible');
-  } else {
-    navbar.classList.add('navbar-hidden');
-    navbar.classList.remove('navbar-visible');
-  }
 }
 
 // ── Slide visibility (just opacity/transform, no content reveal) ─
@@ -162,7 +153,6 @@ function setActiveSlide(index) {
     });
     dots.forEach(d => d.classList.remove('active'));
     dots[index + 1].classList.add('active');
-    navbar.classList.add('scrolled');
   }
 }
 
@@ -226,22 +216,6 @@ document.querySelectorAll('[data-slide]').forEach(el => {
   });
 });
 
-// ── Mobile menu ───────────────────────────────────────────────
-const mobileToggle      = document.querySelector('.mobile-toggle');
-const mobileMenuOverlay = document.querySelector('.mobile-menu-overlay');
-const mobileClose       = document.querySelector('.mobile-close');
-
-mobileToggle?.addEventListener('click', () => {
-  mobileMenuOverlay.classList.add('active');
-  document.body.style.overflow = 'hidden';
-});
-
-function closeMobileMenu() {
-  mobileMenuOverlay.classList.remove('active');
-  document.body.style.overflow = '';
-}
-mobileClose?.addEventListener('click', closeMobileMenu);
-document.querySelectorAll('.mobile-link').forEach(l => l.addEventListener('click', closeMobileMenu));
 
 // ── Experience accordion ──────────────────────────────────────
 document.querySelectorAll('.experience-card').forEach(card => {
