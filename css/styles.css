@@ -391,8 +391,7 @@ img {
 }
 
 .hero .container,
-#slide-hero .container,
-#section-hero .container {
+#slide-hero .container {
   position: relative;
   z-index: 1;
   display: grid;
@@ -1203,8 +1202,7 @@ section {
 
   /* Hero: stack vertically on mobile */
   .hero .container,
-  #slide-hero .container,
-  #section-hero .container {
+  #slide-hero .container {
     grid-template-columns: 1fr !important;
     gap: 1.5rem;
     text-align: center;
@@ -1342,80 +1340,99 @@ section {
   }
 }
 
-/* ===== Stacked Sticky Cards ===== */
+/* ===== Scroll-Driven Fullscreen Slides ===== */
 
-/* Each section is a full-viewport sticky card */
-.card-section {
+/* 200vh hero reveal zone + 4 slides × 150vh = 800vh total */
+.scroll-track {
+  height: 800vh;
+  position: relative;
+}
+
+/* Sticky viewport that pins while user scrolls */
+.slides-viewport {
   position: sticky;
   top: 0;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Every slide fills the viewport and stacks */
+.slide {
+  position: absolute;
+  inset: 0;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: stretch;
-  background: #0a0a0a;
+  padding: 80px 0 0;
   overflow: hidden;
+  background: var(--bg-primary);
+
+  opacity: 0;
+  transform: scale(0.97) translateY(24px);
+  pointer-events: none;
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: opacity, transform;
 }
 
-/* Stack order: later sections sit on top */
-#section-hero       { z-index: 1; min-height: 200vh; }
-#section-about      { z-index: 2; }
-#section-experience { z-index: 3; }
-#section-projects   { z-index: 4; }
-#section-contact    { z-index: 5; }
-
-/* Subtle top border so sections feel like distinct cards */
-#section-about,
-#section-experience,
-#section-projects,
-#section-contact {
-  border-top: 1px solid rgba(255,255,255,0.07);
-  box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
-}
-
-/* Content-heavy sections: allow internal scroll */
-#section-experience,
-#section-projects,
-#section-contact {
-  justify-content: flex-start;
-  padding-top: 3rem;
+/* Content-heavy slides scroll internally */
+#slide-experience,
+#slide-projects,
+#slide-contact {
   overflow-y: auto;
-  min-height: 100vh;
+  justify-content: flex-start;
+  padding-top: 80px;
 }
 
-/* Hero bg */
-#section-hero .hero-bg {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: #0a0a0a;
-}
-#section-hero .container {
-  position: relative;
-  z-index: 1;
+/* Outgoing slide */
+.slide.leaving {
+  opacity: 0;
+  transform: scale(1.03) translateY(-20px);
+  pointer-events: none;
 }
 
-/* Scroll hint */
+/* Active slide */
+.slide.active {
+  opacity: 1;
+  transform: scale(1) translateY(0);
+  pointer-events: all;
+}
+
+/* All slides: uniform dark background */
+.slide {
+  background: #0a0a0a !important;
+}
+
+#slide-contact {
+  justify-content: flex-start;
+  padding-bottom: 0;
+}
+
+/* Scroll hint replaces old scroll-indicator */
 .scroll-hint {
   position: absolute;
   bottom: 2rem;
   left: 50%;
   transform: translateX(-50%);
   text-align: center;
-  color: rgba(255,255,255,0.3);
+  color: var(--text-tertiary);
   font-size: 0.8rem;
   letter-spacing: 0.05em;
   animation: bounce 2s infinite;
   pointer-events: none;
 }
+
 .scroll-hint .scroll-line {
   width: 2px;
   height: 32px;
-  background: linear-gradient(to bottom, rgba(255,255,255,0.3), transparent);
+  background: linear-gradient(to bottom, var(--text-tertiary), transparent);
   margin: 0.4rem auto 0;
 }
 
 /* ===== Word-by-word reveal ===== */
+
+/* Each word wrapped in a span by JS — starts invisible */
 .word {
   display: inline-block;
   opacity: 0;
@@ -1423,125 +1440,236 @@ section {
   transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .word.revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Hero groups */
+/* Hero groups hidden until JS reveals them */
 .hero-group {
   opacity: 0;
   transform: translateY(28px);
   transition: opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .hero-group.revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* Blocks (cards, items) */
+/* ===== Global dark theme for all slides ===== */
+
+/* Hero bg */
+#slide-hero .hero-bg { background: #0a0a0a !important; }
+
+/* All text on dark */
+.slide h1, .slide h2, .slide h3, .slide h4 { color: #fff; }
+.slide p, .slide .about-text, .slide .hero-description,
+.slide .contact-description, .slide .project-description,
+.slide .experience-company, .slide .experience-date,
+.slide .experience-location { color: rgba(255,255,255,0.62); }
+
+.slide .hero-subtitle     { color: rgba(255,255,255,0.8); }
+.slide .gradient-text     { color: #fff; }
+.slide .section-tag       { color: var(--secondary-light); background: rgba(41,151,255,0.1); border-color: rgba(41,151,255,0.25); }
+
+/* Stats */
+.slide .stat-number {
+  background: linear-gradient(135deg, #fff, var(--secondary-light));
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.slide .stat-label { color: rgba(255,255,255,0.45); }
+
+/* Cards */
+.slide .skill-card,
+.slide .experience-card,
+.slide .project-card,
+.slide .contact-item,
+.slide .contact-form-wrapper {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+}
+.slide .skill-card:hover,
+.slide .experience-card:hover,
+.slide .project-card:hover,
+.slide .contact-item:hover {
+  background: rgba(255,255,255,0.09);
+  border-color: rgba(255,255,255,0.2);
+}
+
+/* Highlight items */
+.slide .highlight-item {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.1);
+}
+.slide .highlight-item i  { color: var(--secondary-light); }
+.slide .highlight-item span { color: rgba(255,255,255,0.75); }
+
+/* Tags */
+.slide .tag {
+  background: rgba(255,255,255,0.07);
+  border-color: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.65);
+}
+
+/* Experience achievements */
+.slide .experience-achievements li { color: rgba(255,255,255,0.65); }
+.slide .experience-achievements li::before { color: var(--secondary-light); }
+
+/* Experience toggle button */
+.slide .experience-toggle {
+  background: rgba(255,255,255,0.08);
+  color: rgba(255,255,255,0.6);
+}
+
+/* Form inputs */
+.slide .form-group label  { color: rgba(255,255,255,0.85); }
+.slide .form-group input,
+.slide .form-group textarea {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.12);
+  color: #fff;
+}
+.slide .form-group input:focus,
+.slide .form-group textarea:focus {
+  background: rgba(255,255,255,0.1);
+  border-color: var(--secondary-light);
+}
+.slide .form-group input::placeholder,
+.slide .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
+
+/* Project category label */
+.slide .project-category { color: var(--secondary-light); }
+
+/* Contact value/label */
+.slide .contact-label { color: rgba(255,255,255,0.45); }
+.slide .contact-value { color: rgba(255,255,255,0.9); }
+
+/* Skill icon bg stays blue */
+.slide .skill-icon { background: var(--secondary); }
+
+/* Secondary button on dark */
+.slide .btn-secondary {
+  color: rgba(255,255,255,0.85);
+  border-color: rgba(255,255,255,0.35);
+}
+.slide .btn-secondary:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.65);
+}
+
+/* Footer on dark */
+.slide .footer {
+  background: rgba(255,255,255,0.03);
+  border-top-color: rgba(255,255,255,0.08);
+}
+.slide .footer-brand h3,
+.slide .footer-brand p   { color: rgba(255,255,255,0.6); }
+.slide .footer-links a   { color: rgba(255,255,255,0.5); }
+.slide .footer-links a:hover { color: #fff; }
+.slide .footer-social a  { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.1); color: rgba(255,255,255,0.6); }
+.slide .footer-bottom    { color: rgba(255,255,255,0.3); border-top-color: rgba(255,255,255,0.08); }
+
+/* Cards / blocks that animate in as units */
 .slide-block {
   opacity: 0;
   transform: translateY(32px);
   transition: opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
               transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
 .slide-block.revealed {
   opacity: 1;
   transform: translateY(0);
 }
 
-/* ===== Dark theme for all sections ===== */
-.card-section h1,
-.card-section h2,
-.card-section h3,
-.card-section h4 { color: #fff; }
-
-.card-section p,
-.card-section .about-text,
-.card-section .hero-description,
-.card-section .contact-description,
-.card-section .project-description,
-.card-section .experience-company,
-.card-section .experience-date,
-.card-section .experience-location { color: rgba(255,255,255,0.62); }
-
-.card-section .hero-subtitle  { color: rgba(255,255,255,0.8); }
-.card-section .gradient-text  { color: #fff; }
-.card-section .section-tag    { color: var(--secondary-light); background: rgba(41,151,255,0.1); border-color: rgba(41,151,255,0.25); }
-.card-section .project-category { color: var(--secondary-light); }
-.card-section .contact-label  { color: rgba(255,255,255,0.45); }
-.card-section .contact-value  { color: rgba(255,255,255,0.9); }
-
-.card-section .stat-number {
-  background: linear-gradient(135deg, #fff, var(--secondary-light));
-  -webkit-background-clip: text;
-  background-clip: text;
-  -webkit-text-fill-color: transparent;
+/* Hero image block */
+.hero-image.slide-block {
+  transform: scale(0.93) translateY(24px);
 }
-.card-section .stat-label { color: rgba(255,255,255,0.45); }
-
-.card-section .skill-card,
-.card-section .experience-card,
-.card-section .project-card,
-.card-section .contact-item,
-.card-section .contact-form-wrapper {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.1);
-}
-.card-section .skill-card:hover,
-.card-section .experience-card:hover,
-.card-section .project-card:hover,
-.card-section .contact-item:hover {
-  background: rgba(255,255,255,0.09);
-  border-color: rgba(255,255,255,0.2);
+.hero-image.slide-block.revealed {
+  transform: scale(1) translateY(0);
 }
 
-.card-section .highlight-item {
-  background: rgba(255,255,255,0.05);
-  border-color: rgba(255,255,255,0.1);
-}
-.card-section .highlight-item i    { color: var(--secondary-light); }
-.card-section .highlight-item span { color: rgba(255,255,255,0.75); }
-
-.card-section .tag {
-  background: rgba(255,255,255,0.07);
-  border-color: rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.65);
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(40px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-.card-section .experience-achievements li { color: rgba(255,255,255,0.65); }
-.card-section .experience-achievements li::before { color: var(--secondary-light); }
-.card-section .experience-toggle {
-  background: rgba(255,255,255,0.08);
-  color: rgba(255,255,255,0.6);
+/* ===== Dot Navigation ===== */
+.dot-nav {
+  position: fixed;
+  right: 1.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 900;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
 }
 
-.card-section .form-group label { color: rgba(255,255,255,0.85); }
-.card-section .form-group input,
-.card-section .form-group textarea {
-  background: rgba(255,255,255,0.06);
-  border-color: rgba(255,255,255,0.12);
-  color: #fff;
+.dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 2px solid var(--text-tertiary);
+  background: transparent;
+  cursor: pointer;
+  padding: 0;
+  transition: all 0.3s ease;
 }
-.card-section .form-group input:focus,
-.card-section .form-group textarea:focus {
-  background: rgba(255,255,255,0.1);
+
+.dot:hover {
+  border-color: var(--secondary);
+  background: var(--secondary);
+  transform: scale(1.2);
+}
+
+.dot.active {
+  background: var(--secondary);
+  border-color: var(--secondary);
+  transform: scale(1.3);
+}
+
+/* Dark mode dot nav */
+body.dark-mode .dot {
+  border-color: rgba(255,255,255,0.3);
+}
+body.dark-mode .dot.active,
+body.dark-mode .dot:hover {
   border-color: var(--secondary-light);
+  background: var(--secondary-light);
 }
-.card-section .form-group input::placeholder,
-.card-section .form-group textarea::placeholder { color: rgba(255,255,255,0.3); }
 
-.card-section .skill-icon { background: var(--secondary); }
+/* Hide dots on very small screens */
+@media (max-width: 480px) {
+  .dot-nav { display: none; }
+}
 
-.card-section .btn-secondary {
-  color: rgba(255,255,255,0.85);
-  border-color: rgba(255,255,255,0.35);
+/* Make experience / projects slides scrollable if content overflows */
+#slide-experience .container,
+#slide-projects .container {
+  max-height: calc(100vh - 100px);
+  overflow-y: auto;
+  padding-bottom: 2rem;
 }
-.card-section .btn-secondary:hover {
-  background: rgba(255,255,255,0.08);
-  border-color: rgba(255,255,255,0.65);
+
+/* Contact slide: allow footer to sit below form */
+#slide-contact {
+  overflow-y: auto;
 }
+
+/* Ensure hero bg fills slide */
+#slide-hero .hero-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+/* #slide-hero .container layout is defined with .hero .container above */
 
 /* Dark mode removed */

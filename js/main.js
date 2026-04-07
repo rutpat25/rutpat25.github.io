@@ -1,8 +1,28 @@
 // ===========================
-// Sticky Stacked Cards Portfolio
+// Scroll-Driven Portfolio
 // ===========================
 
+// ── Layout constants ──────────────────────────────────────────
+// Total scroll track: 800vh
+// Zone 0:   0%  → 25%   = Hero (200vh)
+// Zone 1:  25%  → 43.75% = About (150vh)
+// Zone 2: 43.75% → 62.5% = Experience (150vh)
+// Zone 3: 62.5% → 81.25% = Projects (150vh)
+// Zone 4: 81.25% → 100%  = Contact (150vh)
+
+const HERO_ZONE_END = 0.25;
+const CONTENT_ZONES = [
+  { start: 0.25,   end: 0.4375 },  // About
+  { start: 0.4375, end: 0.625  },  // Experience
+  { start: 0.625,  end: 0.8125 },  // Projects
+  { start: 0.8125, end: 1.0    },  // Contact
+];
+
+const slides     = Array.from(document.querySelectorAll('.slide'));
+const dots       = Array.from(document.querySelectorAll('.dot'));
 const heroGroups = Array.from(document.querySelectorAll('.hero-group'));
+
+let currentSection = -1; // -1 = hero, 0-3 = content slides
 
 // ── Word splitter ─────────────────────────────────────────────
 function splitWords(el) {
@@ -14,76 +34,188 @@ function splitWords(el) {
     .join('');
 }
 
-// ── Hero: scroll-driven word reveal ──────────────────────────
-// Hero gets 200vh — scroll through it reveals groups 0-5
-function initHeroReveal() {
-  heroGroups.slice(0, 3).forEach(g => splitWords(g));
+// ── Build scroll-reveal groups for each content slide ────────
+// Each element tagged with data-reveal-group="N" will reveal
+// when scroll progress through that slide's zone passes N/totalGroups
 
-  const hero = document.getElementById('section-hero');
-  const GROUP_COUNT = heroGroups.length; // 6
+function buildSlideGroups(slideEl) {
+  // Collect all animatable elements in DOM order
+  const allItems = [];
 
-  function update() {
-    const scrolled = window.scrollY;
-    // Hero is 200vh tall; spread all 6 groups across 20px→(window.innerHeight*1.5)
-    const revealRange = window.innerHeight * 1.5;
-    const progress = Math.min(Math.max((scrolled - 20) / revealRange, 0), 1);
-
-    heroGroups.forEach((group, i) => {
-      // Group 0 starts at progress 0.03 (needs ~30px scroll), last group at ~0.9
-      const threshold = 0.03 + (i / GROUP_COUNT) * 0.87;
-      if (progress >= threshold) {
-        group.classList.add('revealed');
-        if (i < 3) {
-          group.querySelectorAll('.word').forEach((w, wi) => {
-            setTimeout(() => w.classList.add('revealed'), wi * 40);
-          });
-        }
-      } else {
-        group.classList.remove('revealed');
-        group.querySelectorAll('.word').forEach(w => w.classList.remove('revealed'));
-      }
-    });
-  }
-
-  window.addEventListener('scroll', update, { passive: true });
-  update();
-}
-
-// ── Content sections: IntersectionObserver reveal ────────────
-const WORD_SELECTORS = '.section-tag, .section-title, .about-text, .skills-title, .contact-description';
-const BLOCK_SELECTORS = '.skill-card, .experience-card, .project-card, .highlight-item, .contact-item, .contact-form-wrapper';
-
-function initSectionReveal(sectionEl) {
-  // Split and collect all items in DOM order
-  const items = [];
-
-  sectionEl.querySelectorAll(WORD_SELECTORS).forEach(el => {
+  // Section header words
+  slideEl.querySelectorAll('.section-tag, .section-title').forEach(el => {
     splitWords(el);
-    el.querySelectorAll('.word').forEach(w => items.push(w));
+    el.querySelectorAll('.word').forEach(w => allItems.push({ el: w, type: 'word' }));
   });
 
-  sectionEl.querySelectorAll(BLOCK_SELECTORS).forEach(el => {
-    el.classList.add('slide-block');
-    items.push(el);
+  // Body text words
+  slideEl.querySelectorAll('.about-text, .skills-title, .contact-description').forEach(el => {
+    splitWords(el);
+    el.querySelectorAll('.word').forEach(w => allItems.push({ el: w, type: 'word' }));
   });
 
-  // Only reveal after page has had a chance to settle (not on initial load)
-  let ready = false;
-  setTimeout(() => { ready = true; }, 300);
+  // Block elements (cards, items, form)
+  slideEl.querySelectorAll(
+    '.skill-card, .experience-card, .project-card, .highlight-item, .contact-item, .contact-form-wrapper'
+  ).forEach(el => allItems.push({ el, type: 'block' }));
 
-  const observer = new IntersectionObserver(entries => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting && ready) {
-        items.forEach((item, i) => {
-          setTimeout(() => item.classList.add('revealed'), i * 35);
+  // Tag each item with its reveal threshold (0→1 within the slide zone)
+  const total = allItems.length;
+  allItems.forEach((item, i) => {
+    item.threshold = total > 1 ? i / (total - 1) * 0.85 : 0; // spread across 0→85% of zone
+    item.el.dataset.revealThreshold = item.threshold;
+    item.el.classList.remove('revealed');
+    // Ensure base hidden styles
+    if (item.type === 'word') {
+      item.el.classList.add('word');
+    } else {
+      item.el.classList.add('slide-block');
+    }
+  });
+
+  return allItems;
+}
+
+// Store item lists per slide index (0=about, 1=exp, 2=proj, 3=contact)
+const slideItems = [null, null, null, null];
+
+function prepareAllSlides() {
+  slides.slice(1).forEach((slideEl, i) => {
+    slideItems[i] = buildSlideGroups(slideEl);
+  });
+}
+
+// ── Update a content slide's reveal based on progress ────────
+function updateSlideReveal(slideIndex, progress) {
+  // progress = 0→1 within this slide's zone
+  const items = slideItems[slideIndex];
+  if (!items) return;
+
+  items.forEach(item => {
+    if (progress >= item.threshold) {
+      item.el.classList.add('revealed');
+    } else {
+      item.el.classList.remove('revealed');
+    }
+  });
+}
+
+// ── Hero scroll reveal ────────────────────────────────────────
+function updateHeroReveal(progress) {
+  // 6 groups, each unlocks at i/6 of hero progress
+  const GROUP_COUNT = 6;
+  heroGroups.forEach((group, i) => {
+    const threshold = i / GROUP_COUNT;
+    if (progress >= threshold) {
+      group.classList.add('revealed');
+      if (i < 3) {
+        group.querySelectorAll('.word').forEach((w, wi) => {
+          setTimeout(() => w.classList.add('revealed'), wi * 40);
         });
-        observer.disconnect();
+      }
+    } else {
+      group.classList.remove('revealed');
+      group.querySelectorAll('.word').forEach(w => w.classList.remove('revealed'));
+    }
+  });
+
+}
+
+// ── Slide visibility (just opacity/transform, no content reveal) ─
+function setActiveSlide(index) {
+  // index: -1=hero, 0-3=content
+  if (index === currentSection) return;
+  const prev = currentSection;
+  currentSection = index;
+
+  const heroSlide = document.getElementById('slide-hero');
+
+  if (index === -1) {
+    slides.forEach(s => {
+      s.classList.remove('active');
+      s.classList.add('leaving');
+    });
+    setTimeout(() => slides.forEach(s => s.classList.remove('leaving')), 700);
+    heroSlide.classList.add('active');
+    dots.forEach(d => d.classList.remove('active'));
+    dots[0].classList.add('active');
+  } else {
+    slides.forEach((s, i) => {
+      const isTarget = i === index + 1; // +1: slides[0]=hero, slides[1]=about
+      if (isTarget) {
+        s.classList.remove('leaving');
+        s.classList.add('active');
+      } else if (s.classList.contains('active')) {
+        s.classList.remove('active');
+        s.classList.add('leaving');
+        setTimeout(() => s.classList.remove('leaving'), 700);
       }
     });
-  }, { threshold: 0.15 });
-
-  observer.observe(sectionEl);
+    dots.forEach(d => d.classList.remove('active'));
+    dots[index + 1].classList.add('active');
+  }
 }
+
+// ── Main scroll handler ───────────────────────────────────────
+function onScroll() {
+  const track = document.querySelector('.scroll-track');
+  const maxScroll = track.scrollHeight - window.innerHeight;
+  if (maxScroll <= 0) return;
+
+  const p = Math.min(window.scrollY / maxScroll, 1);
+
+  if (p < HERO_ZONE_END) {
+    // Hero zone
+    const heroP = p / HERO_ZONE_END;
+    updateHeroReveal(heroP);
+    setActiveSlide(-1);
+    document.getElementById('slide-hero').classList.add('active');
+  } else {
+    // Content zones
+    CONTENT_ZONES.forEach((zone, i) => {
+      if (p >= zone.start && p < zone.end) {
+        const zoneP = (p - zone.start) / (zone.end - zone.start); // 0→1 within zone
+        setActiveSlide(i);
+        updateSlideReveal(i, zoneP);
+      }
+    });
+
+    // Edge: last slide at exactly 100%
+    if (p >= CONTENT_ZONES[3].start) {
+      const zoneP = (p - CONTENT_ZONES[3].start) / (1 - CONTENT_ZONES[3].start);
+      setActiveSlide(3);
+      updateSlideReveal(3, Math.min(zoneP, 1));
+    }
+  }
+}
+
+window.addEventListener('scroll', onScroll, { passive: true });
+
+// ── Dot + nav clicks ──────────────────────────────────────────
+function jumpToSlide(index) {
+  const track = document.querySelector('.scroll-track');
+  const maxScroll = track.scrollHeight - window.innerHeight;
+  let p;
+  if (index === 0) {
+    p = 0;
+  } else {
+    const zone = CONTENT_ZONES[index - 1];
+    p = zone.start + 0.01;
+  }
+  window.scrollTo({ top: p * maxScroll, behavior: 'smooth' });
+}
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => jumpToSlide(parseInt(dot.dataset.slide)));
+});
+
+document.querySelectorAll('[data-slide]').forEach(el => {
+  el.addEventListener('click', e => {
+    if (el.tagName.toLowerCase() === 'a') e.preventDefault();
+    jumpToSlide(parseInt(el.dataset.slide));
+  });
+});
+
 
 // ── Experience accordion ──────────────────────────────────────
 document.querySelectorAll('.experience-card').forEach(card => {
@@ -131,11 +263,15 @@ document.getElementById('contact-form')?.addEventListener('submit', async functi
 });
 
 // ── Init ──────────────────────────────────────────────────────
-initHeroReveal();
+// Split hero text groups
+heroGroups.slice(0, 3).forEach(g => splitWords(g));
 
-document.querySelectorAll('.card-section:not(#section-hero)').forEach(s => {
-  initSectionReveal(s);
-});
+// Build reveal item lists for all content slides
+prepareAllSlides();
+
+// Hero slide active on load, all groups hidden
+slides[0].classList.add('active');
+dots[0].classList.add('active');
 
 // ── Console easter egg ────────────────────────────────────────
 console.log('%c👋 Hey there!', 'font-size: 24px; font-weight: bold; color: #6366f1;');
