@@ -394,7 +394,8 @@ img {
   display: none;
 }
 
-.hero .container {
+.hero .container,
+#slide-hero .container {
   position: relative;
   z-index: 1;
   display: grid;
@@ -1204,7 +1205,8 @@ section {
   .experience-logo { display: none; }
 
   /* Hero: stack vertically on mobile */
-  .hero .container {
+  .hero .container,
+  #slide-hero .container {
     grid-template-columns: 1fr !important;
     gap: 1.5rem;
     text-align: center;
@@ -1554,10 +1556,7 @@ body.dark-mode .dot:hover {
   z-index: 0;
 }
 
-#slide-hero .container {
-  position: relative;
-  z-index: 1;
-}
+/* #slide-hero .container layout is defined with .hero .container above */
 
 /* ===== Dark Mode ===== */
 body.dark-mode {
