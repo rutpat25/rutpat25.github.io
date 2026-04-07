@@ -12,17 +12,14 @@
 </head>
 <body>
 
-    <!-- Navigation -->
-    <nav class="navbar">
+    <!-- Navigation (hidden on load, fades in after hero) -->
+    <nav class="navbar navbar-hidden">
         <div class="nav-container">
             <a href="#" class="nav-brand" data-slide="0">RP</a>
             <div class="nav-menu">
                 <a href="#about" class="nav-item" data-slide="1">About</a>
                 <a href="#experience" class="nav-item" data-slide="2">Experience</a>
                 <a href="#projects" class="nav-item" data-slide="3">Projects</a>
-                <button class="theme-toggle" id="theme-toggle" aria-label="Toggle dark mode">
-                    <i class="fas fa-moon"></i>
-                </button>
                 <a href="#contact" class="nav-item nav-item-cta" data-slide="4">Let's Talk</a>
             </div>
             <button class="mobile-toggle">
@@ -50,7 +47,7 @@
         </div>
     </div>
 
-    <!-- Scroll Track — height drives the scroll-driven animation -->
+    <!-- Scroll Track — 200vh hero reveal + 4×150vh slides = 800vh total -->
     <div class="scroll-track">
 
         <!-- Sticky viewport that pins all slides -->
@@ -65,16 +62,20 @@
                 </div>
                 <div class="container">
                     <div class="hero-content">
-                        <h1 class="hero-title">
+                        <!-- Group 0: name -->
+                        <h1 class="hero-title hero-group" data-group="0">
                             Hi, I'm <span class="gradient-text">Rutwij Patil</span>
                         </h1>
-                        <p class="hero-subtitle">Product Manager & Strategist</p>
-                        <p class="hero-description">
+                        <!-- Group 1: subtitle -->
+                        <p class="hero-subtitle hero-group" data-group="1">Product Manager & Strategist</p>
+                        <!-- Group 2: description -->
+                        <p class="hero-description hero-group" data-group="2">
                             Transforming ideas into impactful products through data-driven strategy,
                             user-centric design, and engineering excellence. Former Oracle consultant
                             now pursuing Engineering Management at Northeastern University.
                         </p>
-                        <div class="hero-cta">
+                        <!-- Group 3: CTA buttons -->
+                        <div class="hero-cta hero-group" data-group="3">
                             <a href="#contact" class="btn btn-primary" data-slide="4">
                                 <span>Get In Touch</span>
                                 <i class="fas fa-arrow-right"></i>
@@ -84,7 +85,8 @@
                                 <span>Resume</span>
                             </a>
                         </div>
-                        <div class="hero-stats">
+                        <!-- Group 4: stats -->
+                        <div class="hero-stats hero-group" data-group="4">
                             <div class="stat">
                                 <div class="stat-number">2+</div>
                                 <div class="stat-label">Years Experience</div>
@@ -99,7 +101,8 @@
                             </div>
                         </div>
                     </div>
-                    <div class="hero-image">
+                    <!-- Group 5: photo -->
+                    <div class="hero-image hero-group" data-group="5">
                         <div class="profile-card">
                             <img src="pics/dp001.jpg" alt="Rutwij Patil">
                             <div class="profile-glow"></div>
