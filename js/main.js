@@ -59,28 +59,21 @@ window.addEventListener('scroll', () => {
   lastScroll = currentScroll;
 });
 
-// Intersection Observer for Fade-in Animations
-const observerOptions = {
-  threshold: 0.1,
-  rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
+// Scroll Reveal
+const scrollRevealObserver = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
     if (entry.isIntersecting) {
-      entry.target.classList.add('fade-in');
+      entry.target.classList.add('revealed');
+      scrollRevealObserver.unobserve(entry.target);
     }
   });
-}, observerOptions);
-
-// Observe all sections
-document.querySelectorAll('section').forEach(section => {
-  observer.observe(section);
+}, {
+  threshold: 0.12,
+  rootMargin: '0px 0px -60px 0px'
 });
 
-// Observe skill cards, project cards, and timeline items
-document.querySelectorAll('.skill-card, .project-card, .timeline-item').forEach(el => {
-  observer.observe(el);
+document.querySelectorAll('.sr').forEach(el => {
+  scrollRevealObserver.observe(el);
 });
 
 // EmailJS Configuration
