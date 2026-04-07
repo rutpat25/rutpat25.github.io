@@ -53,12 +53,13 @@
 html {
   scroll-behavior: smooth;
   font-size: 16px;
+  background: #0a0a0a;
 }
 
 body {
   font-family: var(--font-primary);
-  background: var(--bg-primary);
-  color: var(--text-primary);
+  background: #0a0a0a;
+  color: #fff;
   line-height: 1.7;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
@@ -225,7 +226,7 @@ img {
 .mobile-toggle span {
   width: 25px;
   height: 2px;
-  background: var(--text-primary);
+  background: rgba(255,255,255,0.8);
   transition: var(--transition-base);
 }
 
